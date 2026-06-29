@@ -23,6 +23,12 @@ const slice = createSlice({
   initialState,
   reducers: {
     setCurrentView: (state: AuthState, action: PayloadAction<string>) => { state.currentView = action.payload; },
+    setTokens: (state: AuthState, action: PayloadAction<{ accessToken: string; refreshToken?: string | null }>) => {
+      state.accessToken = action.payload.accessToken;
+      if (action.payload.refreshToken !== undefined) state.refreshToken = action.payload.refreshToken;
+      sessionStorage.setItem("accessToken", action.payload.accessToken);
+      if (action.payload.refreshToken) sessionStorage.setItem("refreshToken", action.payload.refreshToken);
+    },
     logout: (state: AuthState) => {
       state.isAuthenticated = initialState.isAuthenticated;
       state.user = initialState.user;
@@ -42,4 +48,6 @@ const slice = createSlice({
 });
 
 export const authActions = slice.actions;
+// named export so base-api.ts can reference the action type string reliably
+export const { setTokens } = slice.actions;
 export const authReducer = slice.reducer;
