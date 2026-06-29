@@ -6,6 +6,7 @@ import { AdminGuard } from "@root/guards";
 import { useGetProductsQuery, useDeleteProductMutation } from "@services/products-api";
 import { paths } from "@root/paths";
 import toast from "react-hot-toast";
+import { getImageUrl } from "@shared/utils";
 
 export default function AdminProductsPage() {
   const [search, setSearch] = useState("");
@@ -66,7 +67,7 @@ export default function AdminProductsPage() {
                       <td className="px-4 py-3">
                         <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
                           {p.image
-                            ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}/>
+                            ? <img src={getImageUrl(p.image)!} alt={p.name} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}/>
                             : <div className="w-full h-full flex items-center justify-center text-lg">📦</div>
                           }
                         </div>

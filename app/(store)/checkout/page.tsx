@@ -10,6 +10,7 @@ import { selectAuthUser } from "@slices/auth";
 import toast from "react-hot-toast";
 import type { ShippingAddress } from "@root/types";
 import { paths } from "@root/paths";
+import { getImageUrl } from "@shared/utils";
 
 const SHIP_FEE = 99;
 const FREE_SHIP_THRESHOLD = 999;
@@ -172,7 +173,7 @@ export default function CheckoutPage() {
               <div key={item.productId} className="flex gap-3">
                 <div className="w-12 h-12 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden">
                   {item.product.image
-                    ? <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover"/>
+                    ? <img src={getImageUrl(item.product.image)!} alt={item.product.name} className="w-full h-full object-cover"/>
                     : <div className="w-full h-full flex items-center justify-center text-xl">📦</div>
                   }
                 </div>

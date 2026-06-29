@@ -58,3 +58,11 @@ export const otherDateFormat = (date: any, format: string): string => {
 export const errorSnackbar = (message: string) => {
   console.error(message);
 };
+
+/** Convert a backend-relative image path (/uploads/…) to a full URL */
+export function getImageUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  if (path.startsWith("http")) return path;
+  const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+  return `${base}${path}`;
+}

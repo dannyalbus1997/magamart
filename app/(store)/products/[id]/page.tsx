@@ -8,6 +8,7 @@ import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
 import toast from "react-hot-toast";
 import { paths } from "@root/paths";
+import { getImageUrl } from "@shared/utils";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -79,7 +80,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         {/* Image */}
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden aspect-square flex items-center justify-center">
           {product.image
-            ? <img src={product.image} alt={product.name} className="w-full h-full object-cover"/>
+            ? <img src={getImageUrl(product.image)!} alt={product.name} className="w-full h-full object-cover"/>
             : <div className="text-8xl">📦</div>
           }
         </div>
@@ -139,7 +140,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition group">
                 <div className="h-40 bg-gray-100">
                   {rp.image
-                    ? <img src={rp.image} alt={rp.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+                    ? <img src={getImageUrl(rp.image)!} alt={rp.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
                     : <div className="w-full h-full flex items-center justify-center text-3xl">📦</div>
                   }
                 </div>

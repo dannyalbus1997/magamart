@@ -77,9 +77,10 @@ function LoginForm() {
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      await loginMutation({ email: values.email.trim(), password: values.password.trim() }).unwrap();
+      const result = await loginMutation({ email: values.email.trim(), password: values.password.trim() }).unwrap();
       toast.success("Welcome back!");
-      router.replace(paths.dashboard);
+      const role = result?.data?.user?.role;
+      router.replace(role === "admin" ? paths.admin.root : paths.dashboard);
     } catch (err: unknown) {
       const msg = (err as { data?: { message?: string } })?.data?.message || "Login failed";
       toast.error(msg);

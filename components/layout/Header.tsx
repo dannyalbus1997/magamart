@@ -3,32 +3,42 @@
 import React, { useState } from "react";
 import { paths } from "@root/paths";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
-  Search,
-  ShoppingCart,
-  User,
-  MapPin,
-  Package,
-  Tag,
-  Menu,
-  SlidersHorizontal,
-  ChevronDown,
+  Search, ShoppingCart, User, MapPin, Package, Tag, Menu, SlidersHorizontal, ChevronDown,
 } from "lucide-react";
-
-const categories = [
-  { label: "Groceries", active: true },
-  { label: "Premium Fruits" },
-  { label: "Home & Kitchen" },
-  { label: "Fashion" },
-  { label: "Electronics" },
-  { label: "Beauty" },
-  { label: "Home Improvement" },
-  { label: "Sports, Toys & Luggage" },
-];
+import { useSelector } from "@store/index";
+import { selectAuthUser } from "@slices/auth";
+import { useGetCategoryNamesQuery } from "@services/products-api";
+import { useGetCartQuery } from "@services/cart-api";
 
 export default function Header() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("Groceries");
+  const [activeCategory, setActiveCategory] = useState("");
+
+  const user = useSelector(selectAuthUser) as any;
+  const isLoggedIn = user && Object.keys(user).length > 0;
+
+  const { data: categoryData } = useGetCategoryNamesQuery();
+  const categories = categoryData?.data ?? [];
+
+  const { data: cartData } = useGetCartQuery(undefined, { skip: !isLoggedIn });
+  const cartCount = cartData?.data?.items?.length ?? 0;
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`${paths.products}?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push(paths.products);
+    }
+  };
+
+  const handleCategoryClick = (cat: string) => {
+    setActiveCategory(cat);
+    router.push(`${paths.products}?category=${encodeURIComponent(cat)}`);
+  };
 
   return (
     <header className="w-full sticky top-0 z-50 shadow-sm">
@@ -71,7 +81,7 @@ export default function Header() {
           </div>
 
           {/* Search Bar */}
-          <div className="flex-1 relative">
+          <form onSubmit={handleSearch} className="flex-1 relative">
             <div className="flex items-center border-2 border-blue-500 rounded-lg overflow-hidden bg-white">
               <input
                 type="text"
@@ -80,11 +90,11 @@ export default function Header() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 px-4 py-2.5 text-sm text-gray-700 outline-none bg-transparent placeholder-gray-400"
               />
-              <button className="bg-blue-500 hover:bg-blue-600 transition-colors px-5 py-2.5 flex items-center justify-center">
+              <button type="submit" className="bg-blue-500 hover:bg-blue-600 transition-colors px-5 py-2.5 flex items-center justify-center">
                 <Search size={18} className="text-white" />
               </button>
             </div>
-          </div>
+          </form>
 
           {/* Right Actions */}
           <div className="flex items-center gap-4 flex-shrink-0">
@@ -92,19 +102,36 @@ export default function Header() {
               <SlidersHorizontal size={20} />
             </button>
 
-            {/* Sign In */}
-            <Link
-              href={paths.login}
-              className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors group"
-            >
-              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-                <User size={16} className="text-gray-600 group-hover:text-blue-600" />
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-[10px] text-gray-400">Hello, Sign in</span>
-                <span className="text-xs font-semibold text-gray-800">Sign Up/Sign In</span>
-              </div>
-            </Link>
+            {/* Sign In / User */}
+            {isLoggedIn ? (
+              <Link
+                href={user?.role === "admin" ? paths.admin.root : paths.dashboard}
+                className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                  <User size={16} className="text-blue-600" />
+                </div>
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[10px] text-gray-400">Hello,</span>
+                  <span className="text-xs font-semibold text-gray-800">
+                    {user?.firstName || user?.email?.split("@")[0] || "Account"}
+                  </span>
+                </div>
+              </Link>
+            ) : (
+              <Link
+                href={paths.login}
+                className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
+                  <User size={16} className="text-gray-600 group-hover:text-blue-600" />
+                </div>
+                <div className="flex flex-col leading-tight">
+                  <span className="text-[10px] text-gray-400">Hello, Sign in</span>
+                  <span className="text-xs font-semibold text-gray-800">Sign Up/Sign In</span>
+                </div>
+              </Link>
+            )}
 
             {/* Cart */}
             <Link
@@ -114,7 +141,7 @@ export default function Header() {
               <div className="relative">
                 <ShoppingCart size={22} className="text-gray-700 group-hover:text-blue-600" />
                 <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  0
+                  {cartCount > 9 ? "9+" : cartCount}
                 </span>
               </div>
               <span className="text-xs font-semibold">Cart</span>
@@ -127,22 +154,25 @@ export default function Header() {
       <div className="bg-white border-b border-gray-100 overflow-x-auto">
         <div className="max-w-7xl mx-auto px-4">
           <nav className="flex items-center gap-1">
-            {categories.map((cat) => (
-              <button
-                key={cat.label}
-                onClick={() => setActiveCategory(cat.label)}
-                className={`flex items-center gap-1 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all rounded-none border-b-2 ${
-                  activeCategory === cat.label
-                    ? "text-white bg-blue-500 border-blue-500 rounded-full my-2 px-5 border-0"
-                    : "text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-300"
-                }`}
-              >
-                {cat.label}
-                {cat.label !== "Groceries" && activeCategory !== cat.label && (
-                  <ChevronDown size={12} className="text-gray-400" />
-                )}
-              </button>
-            ))}
+            {categories.length === 0
+              ? /* skeleton while loading */
+                Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="h-4 w-24 bg-gray-100 rounded animate-pulse my-3 mx-1" />
+                ))
+              : categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => handleCategoryClick(cat)}
+                    className={`flex items-center gap-1 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all rounded-none border-b-2 ${
+                      activeCategory === cat
+                        ? "text-white bg-blue-500 border-blue-500 rounded-full my-2 px-5 border-0"
+                        : "text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-300"
+                    }`}
+                  >
+                    {cat}
+                    {activeCategory !== cat && <ChevronDown size={12} className="text-gray-400" />}
+                  </button>
+                ))}
           </nav>
         </div>
       </div>

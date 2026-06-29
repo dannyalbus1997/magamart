@@ -8,6 +8,7 @@ import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
 import type { Order, OrderStatus } from "@root/types";
 import { paths } from "@root/paths";
+import { getImageUrl } from "@shared/utils";
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -49,7 +50,7 @@ function OrderCard({ order }: { order: Order }) {
               <div key={idx} className="flex gap-3 items-center">
                 <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 flex-shrink-0 overflow-hidden">
                   {item.product?.image
-                    ? <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover"/>
+                    ? <img src={getImageUrl(item.product.image)!} alt={item.product.name} className="w-full h-full object-cover"/>
                     : <div className="w-full h-full flex items-center justify-center text-xl">📦</div>
                   }
                 </div>

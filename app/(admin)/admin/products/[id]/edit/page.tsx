@@ -14,8 +14,7 @@ import {
 } from "@services/products-api";
 import { paths } from "@root/paths";
 import toast from "react-hot-toast";
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ?? "http://localhost:3001";
+import { getImageUrl } from "@shared/utils";
 
 const schema = yup.object({
   name: yup.string().trim().required("Product name is required"),
@@ -70,7 +69,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       });
       if (p.image) {
         setExistingImage(p.image);
-        setImagePreview(`${BACKEND_URL}${p.image}`);
+        setImagePreview(getImageUrl(p.image) ?? "");
       }
     }
   }, [data, reset]);

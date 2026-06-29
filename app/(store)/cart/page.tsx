@@ -6,6 +6,7 @@ import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
 import toast from "react-hot-toast";
 import { paths } from "@root/paths";
+import { getImageUrl } from "@shared/utils";
 
 const FREE_SHIP_THRESHOLD = 999;
 const SHIP_FEE = 99;
@@ -83,7 +84,7 @@ export default function CartPage() {
             <div key={item.productId} className="bg-white rounded-2xl border border-gray-100 p-4 flex gap-4">
               <div className="w-20 h-20 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden">
                 {item.product.image
-                  ? <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover"/>
+                  ? <img src={getImageUrl(item.product.image)!} alt={item.product.name} className="w-full h-full object-cover"/>
                   : <div className="w-full h-full flex items-center justify-center text-2xl">📦</div>
                 }
               </div>

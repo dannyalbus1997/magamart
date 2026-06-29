@@ -9,6 +9,7 @@ import { selectAuthUser } from "@slices/auth";
 import toast from "react-hot-toast";
 import type { Product } from "@root/types";
 import { paths } from "@root/paths";
+import { getImageUrl } from "@shared/utils";
 
 const SORT_OPTIONS = [
   { label: "Newest", sortBy: "createdAt", sortOrder: "desc" as const },
@@ -22,7 +23,7 @@ function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: 
       <Link href={paths.product(product.id)}>
         <div className="relative h-48 bg-gray-100 overflow-hidden">
           {product.image
-            ? <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+            ? <img src={getImageUrl(product.image)!} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
             : <div className="w-full h-full flex items-center justify-center text-4xl">📦</div>
           }
           <span className="absolute top-2 left-2 text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{product.category}</span>
