@@ -24,12 +24,16 @@ const customerServices = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1a75d1] text-white">
-      <div className="max-w-7xl mx-auto px-6 py-10">
+    <footer className="bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 text-white relative overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-60 h-60 rounded-full bg-blue-400/10 blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-6 py-10 relative">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand + Contact */}
           <div className="space-y-5">
-            <h2 className="text-2xl font-extrabold tracking-tight">MegaMart</h2>
+            <h2 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">MegaMart</h2>
 
             {/* Contact */}
             <div>

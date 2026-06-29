@@ -10,8 +10,11 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Magamart",
-  description: "Magamart — modern e-commerce platform",
+  title: "MegaMart — Shop Everything",
+  description: "MegaMart — modern e-commerce platform with the best deals on electronics, groceries, fashion, and more.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
