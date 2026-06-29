@@ -8,6 +8,7 @@ import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
 import toast from "react-hot-toast";
 import type { Product } from "@root/types";
+import { paths } from "@root/paths";
 
 const SORT_OPTIONS = [
   { label: "Newest", sortBy: "createdAt", sortOrder: "desc" as const },
@@ -18,7 +19,7 @@ const SORT_OPTIONS = [
 function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: (p: Product) => void }) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
-      <Link href={`/products/${product.id}`}>
+      <Link href={paths.product(product.id)}>
         <div className="relative h-48 bg-gray-100 overflow-hidden">
           {product.image
             ? <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
@@ -33,7 +34,7 @@ function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: 
         </div>
       </Link>
       <div className="p-4">
-        <Link href={`/products/${product.id}`}>
+        <Link href={paths.product(product.id)}>
           <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 hover:text-blue-600">{product.name}</h3>
         </Link>
         <p className="text-blue-600 font-bold text-lg mb-3">₹{product.price.toLocaleString("en-IN")}</p>

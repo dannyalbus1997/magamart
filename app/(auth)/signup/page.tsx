@@ -4,12 +4,36 @@ export const dynamic = "force-dynamic";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import toast from "react-hot-toast";
 import { GuestGuard } from "@root/guards";
 import { useSignupMutation } from "@services/auth-api";
+import { paths } from "@root/paths";
+
+const schema = yup.object({
+  firstName: yup.string().trim().required("First name is required"),
+  lastName: yup.string().trim().required("Last name is required"),
+  email: yup.string().email("Enter a valid email").required("Email is required"),
+  password: yup
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password")], "Passwords do not match")
+    .required("Please confirm your password"),
+  agreed: yup
+    .boolean()
+    .oneOf([true], "You must agree to the Terms & Conditions")
+    .required(),
+});
+
+type SignupFormValues = yup.InferType<typeof schema>;
 
 function passwordStrength(pw: string): { label: string; color: string; width: string } {
-  if (pw.length === 0) return { label: "", color: "bg-gray-200", width: "w-0" };
+  if (!pw) return { label: "", color: "bg-gray-200", width: "w-0" };
   if (pw.length < 6) return { label: "Weak", color: "bg-red-500", width: "w-1/3" };
   if (pw.length < 10 || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw))
     return { label: "Medium", color: "bg-yellow-500", width: "w-2/3" };
@@ -61,36 +85,41 @@ function BrandPanel() {
 function SignupForm() {
   const router = useRouter();
   const [signupMutation] = useSignupMutation();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const [agreed, setAgreed] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const strength = passwordStrength(password);
-  const mismatch = confirm.length > 0 && confirm !== password;
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormValues>({
+    resolver: yupResolver(schema),
+    defaultValues: { agreed: false },
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!agreed) { toast.error("Please agree to the Terms & Conditions"); return; }
-    if (password !== confirm) { toast.error("Passwords do not match"); return; }
-    if (password.length < 6) { toast.error("Password must be at least 6 characters"); return; }
-    setLoading(true);
+  const passwordValue = watch("password", "");
+  const agreedValue = watch("agreed", false);
+  const strength = passwordStrength(passwordValue);
+
+  const onSubmit = async (values: SignupFormValues) => {
     try {
-      await signupMutation({ name: name.trim(), email: email.trim(), password }).unwrap();
+      await signupMutation({
+        name: `${values.firstName.trim()} ${values.lastName.trim()}`,
+        email: values.email.trim(),
+        password: values.password,
+      }).unwrap();
       toast.success("Account created! Please sign in.");
-      router.replace("/login");
+      router.replace(paths.login);
     } catch (err: unknown) {
       const msg = (err as { data?: { message?: string } })?.data?.message || "Signup failed";
       toast.error(msg);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const inputCls = "w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white";
+  const inputBase = "w-full py-3 rounded-xl border bg-gray-50 text-sm transition focus:outline-none focus:ring-2 focus:bg-white";
+  const inputCls = (hasError: boolean) =>
+    `${inputBase} ${hasError ? "border-red-400 focus:ring-red-400" : "border-gray-200 focus:ring-blue-500"}`;
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-white px-6 py-10 sm:px-10 overflow-y-auto">
@@ -103,20 +132,49 @@ function SignupForm() {
           </div>
           <span className="text-2xl font-extrabold text-blue-600">MegaMart</span>
         </div>
+
         <h1 className="text-3xl font-bold text-gray-900 mb-1">Create account</h1>
         <p className="text-gray-500 mb-7">Join millions of happy shoppers</p>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-          {/* Name */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 text-gray-400"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </span>
-              <input id="name" type="text" autoComplete="name" required value={name}
-                onChange={(e) => setName(e.target.value)} placeholder="John Doe" className={inputCls}/>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+          {/* First + Last name */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1.5">First Name</label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 text-gray-400"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </span>
+                <input
+                  id="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  placeholder="John"
+                  {...register("firstName")}
+                  className={`${inputCls(!!errors.firstName)} pl-10 pr-4`}
+                />
+              </div>
+              {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName.message}</p>}
+            </div>
+            <div>
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1.5">Last Name</label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 text-gray-400"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </span>
+                <input
+                  id="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  placeholder="Doe"
+                  {...register("lastName")}
+                  className={`${inputCls(!!errors.lastName)} pl-10 pr-4`}
+                />
+              </div>
+              {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName.message}</p>}
             </div>
           </div>
+
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">Email address</label>
@@ -124,10 +182,18 @@ function SignupForm() {
               <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 text-gray-400"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
               </span>
-              <input id="email" type="email" autoComplete="email" required value={email}
-                onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className={inputCls}/>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                {...register("email")}
+                className={`${inputCls(!!errors.email)} pl-10 pr-4`}
+              />
             </div>
+            {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
           </div>
+
           {/* Password */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
@@ -135,9 +201,13 @@ function SignupForm() {
               <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 text-gray-400"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
               </span>
-              <input id="password" type={showPw ? "text" : "password"} required value={password}
-                onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters"
-                className="w-full pl-10 pr-11 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"/>
+              <input
+                id="password"
+                type={showPw ? "text" : "password"}
+                placeholder="At least 6 characters"
+                {...register("password")}
+                className={`${inputCls(!!errors.password)} pl-10 pr-11`}
+              />
               <button type="button" onClick={() => setShowPw(v => !v)}
                 className="absolute inset-y-0 right-3.5 flex items-center text-gray-400 hover:text-gray-600">
                 {showPw
@@ -146,52 +216,66 @@ function SignupForm() {
                 }
               </button>
             </div>
-            {password.length > 0 && (
+            {passwordValue.length > 0 && (
               <div className="mt-2">
                 <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                   <div className={`h-full rounded-full transition-all duration-300 ${strength.color} ${strength.width}`}/>
                 </div>
-                <p className={`text-xs mt-1 font-medium ${strength.color.replace("bg-","text-")}`}>{strength.label}</p>
+                <p className={`text-xs mt-1 font-medium ${strength.color.replace("bg-", "text-")}`}>{strength.label}</p>
               </div>
             )}
+            {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>}
           </div>
-          {/* Confirm */}
+
+          {/* Confirm Password */}
           <div>
-            <label htmlFor="confirm" className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
             <div className="relative">
               <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4 text-gray-400"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
               </span>
-              <input id="confirm" type="password" required value={confirm}
-                onChange={(e) => setConfirm(e.target.value)} placeholder="Re-enter password"
-                className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm transition focus:outline-none focus:ring-2 focus:bg-white ${mismatch ? "border-red-400 bg-red-50 focus:ring-red-400" : "border-gray-200 bg-gray-50 focus:ring-blue-500"}`}/>
+              <input
+                id="confirmPassword"
+                type="password"
+                placeholder="Re-enter password"
+                {...register("confirmPassword")}
+                className={`${inputCls(!!errors.confirmPassword)} pl-10 pr-4`}
+              />
             </div>
-            {mismatch && <p className="text-xs text-red-500 mt-1">Passwords do not match</p>}
+            {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword.message}</p>}
           </div>
+
           {/* Terms */}
-          <label className="flex items-start gap-3 cursor-pointer group">
-            <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 flex-shrink-0 transition ${agreed ? "bg-blue-600 border-blue-600" : "border-gray-300 group-hover:border-blue-400"}`}
-              onClick={() => setAgreed(v => !v)}>
-              {agreed && <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" className="w-3 h-3"><path d="M20 6L9 17l-5-5"/></svg>}
-            </div>
-            <span className="text-sm text-gray-600">
-              I agree to the{" "}
-              <Link href="/terms" className="text-blue-600 hover:underline font-medium">Terms &amp; Conditions</Link>
-              {" "}and{" "}
-              <Link href="/privacy" className="text-blue-600 hover:underline font-medium">Privacy Policy</Link>
-            </span>
-          </label>
-          <button type="submit" disabled={loading}
+          <div>
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div
+                className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 flex-shrink-0 transition ${agreedValue ? "bg-blue-600 border-blue-600" : "border-gray-300 group-hover:border-blue-400"}`}
+                onClick={() => setValue("agreed", !agreedValue, { shouldValidate: true })}
+              >
+                {agreedValue && <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" className="w-3 h-3"><path d="M20 6L9 17l-5-5"/></svg>}
+              </div>
+              <span className="text-sm text-gray-600">
+                I agree to the{" "}
+                <Link href={paths.terms} className="text-blue-600 hover:underline font-medium">Terms &amp; Conditions</Link>
+                {" "}and{" "}
+                <Link href={paths.privacy} className="text-blue-600 hover:underline font-medium">Privacy Policy</Link>
+              </span>
+            </label>
+            {errors.agreed && <p className="text-xs text-red-500 mt-1">{errors.agreed.message}</p>}
+          </div>
+
+          <button type="submit" disabled={isSubmitting}
             className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-sm shadow-md shadow-blue-200 transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-1">
-            {loading
+            {isSubmitting
               ? <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Creating account…</>
               : "Create Account"
             }
           </button>
         </form>
+
         <p className="text-center text-sm text-gray-500 mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-blue-600 hover:text-blue-700 font-semibold">Sign in</Link>
+          <Link href={paths.login} className="text-blue-600 hover:text-blue-700 font-semibold">Sign in</Link>
         </p>
       </div>
     </div>

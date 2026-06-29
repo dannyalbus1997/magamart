@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
+import { paths } from "@root/paths";
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!user || Object.keys(user).length === 0) {
-      router.replace("/login");
+      router.replace(paths.login);
     }
   }, [user, router]);
 

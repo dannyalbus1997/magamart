@@ -4,9 +4,20 @@ export const dynamic = "force-dynamic";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import toast from "react-hot-toast";
 import { GuestGuard } from "@root/guards";
 import { useLoginMutation } from "@services/auth-api";
+import { paths } from "@root/paths";
+
+const schema = yup.object({
+  email: yup.string().email("Enter a valid email").required("Email is required"),
+  password: yup.string().trim().min(6, "Password must be at least 6 characters").required("Password is required"),
+});
+
+type LoginFormValues = yup.InferType<typeof schema>;
 
 function BrandPanel() {
   return (
@@ -54,26 +65,30 @@ function BrandPanel() {
 function LoginForm() {
   const router = useRouter();
   const [loginMutation] = useLoginMutation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!email.trim() || !password) return;
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = async (values: LoginFormValues) => {
     try {
-      await loginMutation({ email: email.trim(), password }).unwrap();
+      await loginMutation({ email: values.email.trim(), password: values.password.trim() }).unwrap();
       toast.success("Welcome back!");
-      router.replace("/dashboard");
+      router.replace(paths.dashboard);
     } catch (err: unknown) {
       const msg = (err as { data?: { message?: string } })?.data?.message || "Login failed";
       toast.error(msg);
-    } finally {
-      setLoading(false);
     }
   };
+
+  const inputBase = "w-full py-3 rounded-xl border bg-gray-50 text-sm transition focus:outline-none focus:ring-2 focus:bg-white";
+  const inputCls = (hasError: boolean) =>
+    `${inputBase} ${hasError ? "border-red-400 focus:ring-red-400" : "border-gray-200 focus:ring-blue-500"}`;
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center bg-white px-6 py-12 sm:px-10">
@@ -87,9 +102,12 @@ function LoginForm() {
           </div>
           <span className="text-2xl font-extrabold text-blue-600">MegaMart</span>
         </div>
+
         <h1 className="text-3xl font-bold text-gray-900 mb-1">Welcome back</h1>
         <p className="text-gray-500 mb-8">Sign in to your account</p>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
+          {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">Email address</label>
             <div className="relative">
@@ -98,11 +116,19 @@ function LoginForm() {
                   <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/>
                 </svg>
               </span>
-              <input id="email" type="email" autoComplete="email" required value={email}
-                onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com"
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"/>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                {...register("email")}
+                className={`${inputCls(!!errors.email)} pl-10 pr-4`}
+              />
             </div>
+            {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
           </div>
+
+          {/* Password */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
@@ -114,9 +140,14 @@ function LoginForm() {
                   <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
                 </svg>
               </span>
-              <input id="password" type={showPw ? "text" : "password"} autoComplete="current-password" required
-                value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password"
-                className="w-full pl-10 pr-11 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"/>
+              <input
+                id="password"
+                type={showPw ? "text" : "password"}
+                autoComplete="current-password"
+                placeholder="Enter your password"
+                {...register("password")}
+                className={`${inputCls(!!errors.password)} pl-10 pr-11`}
+              />
               <button type="button" onClick={() => setShowPw(v => !v)}
                 className="absolute inset-y-0 right-3.5 flex items-center text-gray-400 hover:text-gray-600">
                 {showPw
@@ -125,15 +156,18 @@ function LoginForm() {
                 }
               </button>
             </div>
+            {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>}
           </div>
-          <button type="submit" disabled={loading}
+
+          <button type="submit" disabled={isSubmitting}
             className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-sm shadow-md shadow-blue-200 transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-1">
-            {loading
+            {isSubmitting
               ? <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Signing in…</>
               : "Sign In"
             }
           </button>
         </form>
+
         <div className="flex items-center gap-3 my-6">
           <span className="flex-1 h-px bg-gray-200"/><span className="text-xs text-gray-400 font-medium">or continue with</span><span className="flex-1 h-px bg-gray-200"/>
         </div>
@@ -149,7 +183,7 @@ function LoginForm() {
         </button>
         <p className="text-center text-sm text-gray-500 mt-8">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-semibold">Sign up</Link>
+          <Link href={paths.signup} className="text-blue-600 hover:text-blue-700 font-semibold">Sign up</Link>
         </p>
       </div>
     </div>

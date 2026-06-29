@@ -5,6 +5,7 @@ import { useGetCartQuery, useUpdateCartItemMutation, useRemoveFromCartMutation }
 import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
 import toast from "react-hot-toast";
+import { paths } from "@root/paths";
 
 const FREE_SHIP_THRESHOLD = 999;
 const SHIP_FEE = 99;
@@ -29,8 +30,8 @@ export default function CartPage() {
         <h2 className="text-2xl font-bold text-gray-900 mb-3">Sign in to view your cart</h2>
         <p className="text-gray-500 mb-8">Your cart items are saved when you sign in</p>
         <div className="flex gap-3 justify-center">
-          <Link href="/login" className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Sign In</Link>
-          <Link href="/products" className="px-6 py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50">Continue Shopping</Link>
+          <Link href={paths.login} className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Sign In</Link>
+          <Link href={paths.products} className="px-6 py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50">Continue Shopping</Link>
         </div>
       </div>
     );
@@ -56,7 +57,7 @@ export default function CartPage() {
         <div className="text-7xl mb-6">🛍️</div>
         <h2 className="text-2xl font-bold text-gray-900 mb-3">Your cart is empty</h2>
         <p className="text-gray-500 mb-8">Add some products to get started</p>
-        <Link href="/products" className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Shop Now</Link>
+        <Link href={paths.products} className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Shop Now</Link>
       </div>
     );
   }
@@ -87,7 +88,7 @@ export default function CartPage() {
                 }
               </div>
               <div className="flex-1 min-w-0">
-                <Link href={`/products/${item.productId}`}
+                <Link href={paths.product(item.productId)}
                   className="font-semibold text-gray-900 text-sm hover:text-blue-600 line-clamp-2 block mb-1">
                   {item.product.name}
                 </Link>
@@ -111,7 +112,7 @@ export default function CartPage() {
               </div>
             </div>
           ))}
-          <Link href="/products" className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium mt-2">
+          <Link href={paths.products} className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium mt-2">
             ← Continue Shopping
           </Link>
         </div>
@@ -135,7 +136,7 @@ export default function CartPage() {
               <span>Total</span><span>₹{total.toLocaleString("en-IN")}</span>
             </div>
           </div>
-          <Link href="/checkout"
+          <Link href={paths.checkout}
             className="block w-full py-3 text-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition">
             Proceed to Checkout
           </Link>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { paths } from "@root/paths";
 import Link from "next/link";
 import {
   Search,
@@ -62,7 +63,7 @@ export default function Header() {
             <button className="text-gray-600 hover:text-blue-600 transition-colors p-1">
               <Menu size={22} />
             </button>
-            <Link href="/" className="flex items-center">
+            <Link href={paths.home} className="flex items-center">
               <span className="text-2xl font-extrabold tracking-tight text-blue-600">
                 Mega<span className="text-blue-500">Mart</span>
               </span>
@@ -93,7 +94,7 @@ export default function Header() {
 
             {/* Sign In */}
             <Link
-              href="/login"
+              href={paths.login}
               className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors group"
             >
               <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
@@ -107,7 +108,7 @@ export default function Header() {
 
             {/* Cart */}
             <Link
-              href="/cart"
+              href={paths.cart}
               className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors group relative"
             >
               <div className="relative">

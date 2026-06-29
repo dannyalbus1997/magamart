@@ -7,6 +7,7 @@ import { useGetMyOrdersQuery } from "@services/orders-api";
 import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
 import type { Order, OrderStatus } from "@root/types";
+import { paths } from "@root/paths";
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -104,7 +105,7 @@ export default function OrdersPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-24 text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-3">Sign in to view orders</h2>
-        <Link href="/login" className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Sign In</Link>
+        <Link href={paths.login} className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Sign In</Link>
       </div>
     );
   }
@@ -135,7 +136,7 @@ export default function OrdersPage() {
           <div className="text-7xl mb-4">📋</div>
           <h3 className="text-xl font-semibold text-gray-800 mb-2">No orders yet</h3>
           <p className="text-gray-500 mb-6">Start shopping and your orders will appear here</p>
-          <Link href="/products" className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Shop Now</Link>
+          <Link href={paths.products} className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Shop Now</Link>
         </div>
       ) : (
         <div className="space-y-4">

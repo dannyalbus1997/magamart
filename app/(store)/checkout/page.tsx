@@ -9,6 +9,7 @@ import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
 import toast from "react-hot-toast";
 import type { ShippingAddress } from "@root/types";
+import { paths } from "@root/paths";
 
 const SHIP_FEE = 99;
 const FREE_SHIP_THRESHOLD = 999;
@@ -35,7 +36,7 @@ export default function CheckoutPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-24 text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-3">Please sign in to checkout</h2>
-        <Link href="/login" className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Sign In</Link>
+        <Link href={paths.login} className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Sign In</Link>
       </div>
     );
   }
@@ -45,7 +46,7 @@ export default function CheckoutPage() {
       <div className="max-w-2xl mx-auto px-4 py-24 text-center">
         <div className="text-6xl mb-4">🛒</div>
         <h2 className="text-2xl font-bold text-gray-900 mb-3">Your cart is empty</h2>
-        <Link href="/products" className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Shop Now</Link>
+        <Link href={paths.products} className="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Shop Now</Link>
       </div>
     );
   }
@@ -72,7 +73,7 @@ export default function CheckoutPage() {
     try {
       await createOrder({ shippingAddress: form, paymentIntent }).unwrap();
       toast.success("Order placed successfully!");
-      router.push("/orders?success=true");
+      router.push(paths.orderSuccess);
     } catch (err: unknown) {
       const msg = (err as { data?: { message?: string } })?.data?.message || "Failed to place order";
       toast.error(msg);

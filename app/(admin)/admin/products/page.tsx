@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { AdminGuard } from "@root/guards";
 import { useGetProductsQuery, useDeleteProductMutation } from "@services/products-api";
+import { paths } from "@root/paths";
 import toast from "react-hot-toast";
 
 export default function AdminProductsPage() {
@@ -32,7 +33,7 @@ export default function AdminProductsPage() {
       <div className="space-y-5">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">Products</h2>
-          <Link href="/admin/products/new"
+          <Link href={paths.admin.productNew}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition">
             + Add Product
           </Link>
@@ -80,7 +81,7 @@ export default function AdminProductsPage() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <Link href={`/admin/products/${p.id}/edit`}
+                          <Link href={paths.admin.productEdit(p.id)}
                             className="px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg transition">Edit</Link>
                           <button onClick={() => setDeleteId(p.id)}
                             className="px-3 py-1.5 text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition">Delete</button>

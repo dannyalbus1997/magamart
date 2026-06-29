@@ -7,6 +7,7 @@ import { useAddToCartMutation } from "@services/cart-api";
 import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
 import toast from "react-hot-toast";
+import { paths } from "@root/paths";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -58,7 +59,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       <div className="max-w-7xl mx-auto px-4 py-20 text-center">
         <div className="text-6xl mb-4">😕</div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Product not found</h2>
-        <Link href="/products" className="mt-4 inline-block px-6 py-2.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700">Browse Products</Link>
+        <Link href={paths.products} className="mt-4 inline-block px-6 py-2.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700">Browse Products</Link>
       </div>
     );
   }
@@ -67,9 +68,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-        <Link href="/" className="hover:text-blue-600">Home</Link>
+        <Link href={paths.home} className="hover:text-blue-600">Home</Link>
         <span>/</span>
-        <Link href="/products" className="hover:text-blue-600">Products</Link>
+        <Link href={paths.products} className="hover:text-blue-600">Products</Link>
         <span>/</span>
         <span className="text-gray-900 font-medium truncate max-w-xs">{product.name}</span>
       </nav>
@@ -118,7 +119,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                   className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition disabled:opacity-60 disabled:cursor-not-allowed">
                   {adding ? "Adding…" : "Add to Cart"}
                 </button>
-                <Link href="/cart"
+                <Link href={paths.cart}
                   className="px-5 py-3 rounded-xl border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold text-sm transition text-center">
                   View Cart
                 </Link>
@@ -134,7 +135,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           <h2 className="text-xl font-bold text-gray-900 mb-5">Related Products</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {related.map(rp => (
-              <Link key={rp.id} href={`/products/${rp.id}`}
+              <Link key={rp.id} href={paths.product(rp.id)}
                 className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition group">
                 <div className="h-40 bg-gray-100">
                   {rp.image

@@ -5,11 +5,12 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
 import { authActions } from "@slices/auth";
+import { paths } from "@root/paths";
 
 const NAV = [
-  { href: "/admin", label: "Dashboard", icon: "📊" },
-  { href: "/admin/products", label: "Products", icon: "📦" },
-  { href: "/admin/orders", label: "Orders", icon: "🧾" },
+  { href: paths.admin.root, label: "Dashboard", icon: "📊" },
+  { href: paths.admin.products, label: "Products", icon: "📦" },
+  { href: paths.admin.orders, label: "Orders", icon: "🧾" },
 ];
 
 function Sidebar() {
@@ -19,7 +20,7 @@ function Sidebar() {
 
   const handleLogout = () => {
     dispatch(authActions.logout());
-    router.replace("/login");
+    router.replace(paths.login);
   };
 
   return (
@@ -51,7 +52,7 @@ function Sidebar() {
           );
         })}
         <div className="my-3 border-t border-white/10"/>
-        <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-blue-100 hover:bg-white/10 transition-colors">
+        <Link href={paths.home} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-blue-100 hover:bg-white/10 transition-colors">
           <span className="text-base">🏪</span> Back to Store
         </Link>
       </nav>
