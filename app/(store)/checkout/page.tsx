@@ -160,7 +160,7 @@ export default function CheckoutPage() {
             className="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-base transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
             {ordering
               ? <><svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Placing Order…</>
-              : `Place Order — ₹${total.toLocaleString("en-IN")}`
+              : `Place Order — $${total.toLocaleString("en-US")}`
             }
           </button>
         </div>
@@ -181,16 +181,16 @@ export default function CheckoutPage() {
                   <p className="text-xs font-medium text-gray-900 line-clamp-2">{item.product.name}</p>
                   <p className="text-xs text-gray-500 mt-0.5">Qty: {item.quantity}</p>
                 </div>
-                <p className="text-xs font-bold text-gray-900 whitespace-nowrap">₹{(item.product.price * item.quantity).toLocaleString("en-IN")}</p>
+                <p className="text-xs font-bold text-gray-900 whitespace-nowrap">${(item.product.price * item.quantity).toLocaleString("en-US")}</p>
               </div>
             ))}
           </div>
           <div className="h-px bg-gray-100 my-3"/>
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between text-gray-600"><span>Subtotal</span><span>₹{subtotal.toLocaleString("en-IN")}</span></div>
-            <div className="flex justify-between text-gray-600"><span>Shipping</span><span className={shipping === 0 ? "text-green-600 font-medium" : ""}>{shipping === 0 ? "FREE" : `₹${SHIP_FEE}`}</span></div>
+            <div className="flex justify-between text-gray-600"><span>Subtotal</span><span>${subtotal.toLocaleString("en-US")}</span></div>
+            <div className="flex justify-between text-gray-600"><span>Shipping</span><span className={shipping === 0 ? "text-green-600 font-medium" : ""}>{shipping === 0 ? "FREE" : `$${SHIP_FEE}`}</span></div>
             <div className="h-px bg-gray-100"/>
-            <div className="flex justify-between font-bold text-gray-900"><span>Total</span><span>₹{total.toLocaleString("en-IN")}</span></div>
+            <div className="flex justify-between font-bold text-gray-900"><span>Total</span><span>${total.toLocaleString("en-US")}</span></div>
           </div>
         </div>
       </div>

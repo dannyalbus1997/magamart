@@ -38,7 +38,7 @@ function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: 
         <Link href={paths.product(product.id)}>
           <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 hover:text-blue-600">{product.name}</h3>
         </Link>
-        <p className="text-blue-600 font-bold text-lg mb-3">₹{product.price.toLocaleString("en-IN")}</p>
+        <p className="text-blue-600 font-bold text-lg mb-3">${product.price.toLocaleString("en-US")}</p>
         <div className="flex items-center justify-between">
           <span className={`text-xs font-medium ${product.stock > 0 ? "text-green-600" : "text-red-500"}`}>
             {product.stock > 0 ? `In Stock (${product.stock})` : "Out of Stock"}
@@ -171,7 +171,7 @@ export default function ProductsPage() {
             </div>
             {/* Price */}
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Price Range (₹)</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Price Range ($)</p>
               <div className="flex gap-2 mb-2">
                 <input type="number" value={minPrice} onChange={e => setMinPrice(e.target.value)} placeholder="Min"
                   className="w-full px-2 py-1.5 rounded-lg border border-gray-200 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"/>

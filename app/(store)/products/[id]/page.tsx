@@ -89,7 +89,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex flex-col">
           <span className="inline-block text-xs font-semibold bg-blue-100 text-blue-700 px-3 py-1 rounded-full w-fit mb-3">{product.category}</span>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{product.name}</h1>
-          <p className="text-3xl font-extrabold text-blue-600 mb-4">₹{product.price.toLocaleString("en-IN")}</p>
+          <p className="text-3xl font-extrabold text-blue-600 mb-4">${product.price.toLocaleString("en-US")}</p>
           <p className="text-gray-600 text-sm leading-relaxed mb-6">{product.description}</p>
 
           {/* Stock */}
@@ -146,7 +146,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </div>
                 <div className="p-3">
                   <p className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1">{rp.name}</p>
-                  <p className="text-blue-600 font-bold text-sm">₹{rp.price.toLocaleString("en-IN")}</p>
+                  <p className="text-blue-600 font-bold text-sm">${rp.price.toLocaleString("en-US")}</p>
                 </div>
               </Link>
             ))}

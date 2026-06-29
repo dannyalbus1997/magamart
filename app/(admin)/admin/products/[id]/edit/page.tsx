@@ -172,7 +172,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           {/* Price + Stock */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Price (₹) *</label>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Price ($) *</label>
               <input type="number" min="0" step="any" {...register("price")} className={inputCls(!!errors.price)} />
               {errors.price && <p className="text-xs text-red-500 mt-1">{errors.price.message}</p>}
             </div>

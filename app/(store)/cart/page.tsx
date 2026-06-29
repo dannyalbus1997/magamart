@@ -93,7 +93,7 @@ export default function CartPage() {
                   className="font-semibold text-gray-900 text-sm hover:text-blue-600 line-clamp-2 block mb-1">
                   {item.product.name}
                 </Link>
-                <p className="text-blue-600 font-bold text-sm mb-3">₹{item.product.price.toLocaleString("en-IN")}</p>
+                <p className="text-blue-600 font-bold text-sm mb-3">${item.product.price.toLocaleString("en-US")}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden">
                     <button onClick={() => handleQty(item.productId, item.quantity - 1)}
@@ -103,7 +103,7 @@ export default function CartPage() {
                       className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 text-gray-600 font-bold">+</button>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-gray-900">₹{(item.product.price * item.quantity).toLocaleString("en-IN")}</span>
+                    <span className="text-sm font-bold text-gray-900">${(item.product.price * item.quantity).toLocaleString("en-US")}</span>
                     <button onClick={() => handleRemove(item.productId)}
                       className="text-red-400 hover:text-red-600 transition p-1">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
@@ -122,19 +122,19 @@ export default function CartPage() {
         <div className="bg-white rounded-2xl border border-gray-100 p-5 h-fit sticky top-24">
           <h2 className="font-bold text-gray-900 mb-4">Order Summary</h2>
           <div className="space-y-3 text-sm mb-4">
-            <div className="flex justify-between text-gray-600"><span>Subtotal</span><span className="font-medium">₹{subtotal.toLocaleString("en-IN")}</span></div>
+            <div className="flex justify-between text-gray-600"><span>Subtotal</span><span className="font-medium">${subtotal.toLocaleString("en-US")}</span></div>
             <div className="flex justify-between text-gray-600">
               <span>Shipping</span>
               <span className={shipping === 0 ? "text-green-600 font-medium" : "font-medium"}>
-                {shipping === 0 ? "FREE" : `₹${SHIP_FEE}`}
+                {shipping === 0 ? "FREE" : `$${SHIP_FEE}`}
               </span>
             </div>
             {shipping > 0 && (
-              <p className="text-xs text-gray-400">Free shipping on orders above ₹{FREE_SHIP_THRESHOLD}</p>
+              <p className="text-xs text-gray-400">Free shipping on orders above ${FREE_SHIP_THRESHOLD}</p>
             )}
             <div className="h-px bg-gray-100"/>
             <div className="flex justify-between font-bold text-gray-900 text-base">
-              <span>Total</span><span>₹{total.toLocaleString("en-IN")}</span>
+              <span>Total</span><span>${total.toLocaleString("en-US")}</span>
             </div>
           </div>
           <Link href={paths.checkout}

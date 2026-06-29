@@ -17,8 +17,8 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
 };
 
 const TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
-  pending: ["processing","cancelled"],
-  processing: ["shipped","cancelled"],
+  pending: ["processing","delivered","cancelled"],
+  processing: ["shipped","delivered","cancelled"],
   shipped: ["delivered","cancelled"],
   delivered: [],
   cancelled: [],
@@ -99,10 +99,10 @@ export default function AdminOrdersPage() {
                       <td className="px-4 py-3 font-mono text-xs text-gray-500">#{order.id.slice(-8).toUpperCase()}</td>
                       <td className="px-4 py-3 font-medium text-gray-900">{(order as any).user?.name || order.userId?.slice(0,8) || "—"}</td>
                       <td className="px-4 py-3 text-gray-500 whitespace-nowrap text-xs">
-                        {new Date(order.createdAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}
+                        {new Date(order.createdAt).toLocaleDateString("en-US",{day:"numeric",month:"short",year:"numeric"})}
                       </td>
                       <td className="px-4 py-3 text-gray-700">{order.items.length} item{order.items.length !== 1 ? "s" : ""}</td>
-                      <td className="px-4 py-3 font-bold text-gray-900">₹{order.total.toLocaleString("en-IN")}</td>
+                      <td className="px-4 py-3 font-bold text-gray-900">${order.total.toLocaleString("en-US")}</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full capitalize ${STATUS_STYLES[order.status]}`}>{order.status}</span>
                       </td>

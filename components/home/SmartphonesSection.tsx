@@ -55,7 +55,7 @@ function ProductCard({ product }: { product: any }) {
       {/* Info */}
       <h3 className="text-xs font-semibold text-gray-800 mb-1 leading-snug line-clamp-2">{product.name}</h3>
       <p className="text-sm font-bold text-gray-900 mt-auto">
-        ₹{product.price.toLocaleString("en-IN")}
+        ${product.price.toLocaleString("en-US")}
       </p>
       {product.stock > 0 && (
         <p className="text-xs text-green-600 font-medium mt-0.5">In Stock ({product.stock})</p>

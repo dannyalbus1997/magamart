@@ -66,7 +66,7 @@ export default function DailyEssentials() {
                       )}
                     </div>
                     <p className="text-xs font-semibold text-gray-800 line-clamp-2 mb-1">{p.name}</p>
-                    <p className="text-sm font-bold text-blue-600">₹{p.price.toLocaleString("en-IN")}</p>
+                    <p className="text-sm font-bold text-blue-600">${p.price.toLocaleString("en-US")}</p>
                   </Link>
                 );
               })}

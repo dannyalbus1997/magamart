@@ -20,7 +20,7 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
 
 function OrderCard({ order }: { order: Order }) {
   const [open, setOpen] = useState(false);
-  const date = new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  const date = new Date(order.createdAt).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
   const firstItem = order.items[0];
   const extra = order.items.length - 1;
 
@@ -38,7 +38,7 @@ function OrderCard({ order }: { order: Order }) {
           <p className="text-xs text-gray-400 mt-0.5">{date}</p>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-base font-bold text-gray-900">₹{order.total.toLocaleString("en-IN")}</span>
+          <span className="text-base font-bold text-gray-900">${order.total.toLocaleString("en-US")}</span>
           <span className="text-gray-400 text-sm">{open ? "▲" : "▼"}</span>
         </div>
       </div>
@@ -56,9 +56,9 @@ function OrderCard({ order }: { order: Order }) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">{item.product?.name}</p>
-                  <p className="text-xs text-gray-500">Qty: {item.quantity} × ₹{item.price?.toLocaleString("en-IN")}</p>
+                  <p className="text-xs text-gray-500">Qty: {item.quantity} × ${item.price?.toLocaleString("en-US")}</p>
                 </div>
-                <p className="text-sm font-bold text-gray-900">₹{((item.price || 0) * item.quantity).toLocaleString("en-IN")}</p>
+                <p className="text-sm font-bold text-gray-900">${((item.price || 0) * item.quantity).toLocaleString("en-US")}</p>
               </div>
             ))}
           </div>
@@ -78,8 +78,8 @@ function OrderCard({ order }: { order: Order }) {
               <p className="font-semibold text-gray-700 mb-1">Payment</p>
               <p className="text-xs text-gray-500 capitalize">{order.paymentStatus || "—"}</p>
               <div className="mt-2 space-y-1 text-xs">
-                <div className="flex justify-between text-gray-500"><span>Subtotal</span><span>₹{order.subtotal?.toLocaleString("en-IN") || "—"}</span></div>
-                <div className="flex justify-between font-bold text-gray-900"><span>Total</span><span>₹{order.total.toLocaleString("en-IN")}</span></div>
+                <div className="flex justify-between text-gray-500"><span>Subtotal</span><span>${order.subtotal?.toLocaleString("en-US") || "—"}</span></div>
+                <div className="flex justify-between font-bold text-gray-900"><span>Total</span><span>${order.total.toLocaleString("en-US")}</span></div>
               </div>
             </div>
           </div>

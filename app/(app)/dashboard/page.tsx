@@ -44,7 +44,7 @@ function OrderRow({ order }: { order: Order }) {
       <td className="px-4 py-3">
         <p className="text-sm font-semibold text-gray-900">#{order.id.slice(-8).toUpperCase()}</p>
         <p className="text-xs text-gray-400 mt-0.5">
-          {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+          {new Date(order.createdAt).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
         </p>
       </td>
 
@@ -68,7 +68,7 @@ function OrderRow({ order }: { order: Order }) {
 
       {/* Total */}
       <td className="px-4 py-3 font-bold text-gray-900 text-sm">
-        ₹{order.total.toLocaleString("en-IN")}
+        ${order.total.toLocaleString("en-US")}
       </td>
 
       {/* Status */}
@@ -117,7 +117,7 @@ function DashboardContent() {
         <StatCard label="Total Orders"  value={totalOrders}   icon="🧾" />
         <StatCard label="Active Orders" value={pendingOrders} icon="🔄" sub={pendingOrders > 0 ? "In progress" : undefined} />
         <StatCard label="Delivered"     value={delivered}     icon="✅" />
-        <StatCard label="Total Spent"   value={`₹${totalSpent.toLocaleString("en-IN")}`} icon="💳" />
+        <StatCard label="Total Spent"   value={`$${totalSpent.toLocaleString("en-US")}`} icon="💳" />
       </div>
 
       {/* Recent Orders */}

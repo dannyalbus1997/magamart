@@ -74,7 +74,7 @@ export default function AdminProductsPage() {
                       </td>
                       <td className="px-4 py-3 font-medium text-gray-900 max-w-[200px] truncate">{p.name}</td>
                       <td className="px-4 py-3"><span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium">{p.category}</span></td>
-                      <td className="px-4 py-3 font-semibold text-gray-900">₹{p.price.toLocaleString("en-IN")}</td>
+                      <td className="px-4 py-3 font-semibold text-gray-900">${p.price.toLocaleString("en-US")}</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${p.stock > 10 ? "bg-green-100 text-green-700" : p.stock > 0 ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"}`}>
                           {p.stock > 0 ? p.stock : "Out"}

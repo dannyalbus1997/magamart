@@ -26,7 +26,7 @@ const MOCK: AnalyticsSummary = {
 };
 
 const STAT_CARDS = [
-  { key: "totalSales", label: "Total Sales", icon: "💰", color: "bg-blue-50 text-blue-600", format: (v: number) => `₹${(v / 100000).toFixed(1)}L` },
+  { key: "totalSales", label: "Total Sales", icon: "💰", color: "bg-blue-50 text-blue-600", format: (v: number) => `$${(v / 100000).toFixed(1)}L` },
   { key: "totalOrders", label: "Total Orders", icon: "🧾", color: "bg-green-50 text-green-600", format: (v: number) => v.toLocaleString() },
   { key: "totalProducts", label: "Products", icon: "📦", color: "bg-purple-50 text-purple-600", format: (v: number) => v.toLocaleString() },
   { key: "totalCustomers", label: "Customers", icon: "👥", color: "bg-orange-50 text-orange-600", format: (v: number) => v.toLocaleString() },
@@ -69,7 +69,7 @@ export default function AdminDashboard() {
             <h3 className="font-bold text-gray-800 mb-4">Sales This Week</h3>
             <CustomChart
               type="area"
-              series={[{ name: "Sales (₹)", data: analytics.salesByDay.map(d => d.sales) }]}
+              series={[{ name: "Sales ($)", data: analytics.salesByDay.map(d => d.sales) }]}
               options={{
                 xaxis: { categories: analytics.salesByDay.map(d => d.date) },
                 colors: ["#3b82f6"],
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
                 stroke: { curve: "smooth", width: 2 },
                 dataLabels: { enabled: false },
                 grid: { borderColor: "#f1f5f9" },
-                tooltip: { y: { formatter: (v: number) => `₹${v.toLocaleString("en-IN")}` } },
+                tooltip: { y: { formatter: (v: number) => `$${v.toLocaleString("en-US")}` } },
               }}
               height="260"
             />
@@ -120,7 +120,7 @@ export default function AdminDashboard() {
                     <td className="px-5 py-3 font-medium text-gray-900">{tp.product.name}</td>
                     <td className="px-5 py-3 text-gray-500">{tp.product.category}</td>
                     <td className="px-5 py-3 font-semibold text-blue-600">{tp.totalSold}</td>
-                    <td className="px-5 py-3 font-semibold text-green-600">₹{tp.revenue.toLocaleString("en-IN")}</td>
+                    <td className="px-5 py-3 font-semibold text-green-600">${tp.revenue.toLocaleString("en-US")}</td>
                   </tr>
                 ))}
               </tbody>
