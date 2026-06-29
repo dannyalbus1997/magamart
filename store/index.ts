@@ -10,6 +10,7 @@ import { clearLocalStorage, getLocalStorage, setLocalStorage } from "@root/utils
 import { configureStore, type ThunkAction } from "@reduxjs/toolkit";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import { authReducer } from "@root/slices/auth/reducer";
+import { cartReducer } from "@root/slices/cart";
 
 const createNoopStorage = () => ({
   getItem(): Promise<null> { return Promise.resolve(null); },
@@ -23,6 +24,7 @@ const persistConfig = { key: "root", version: 1, whitelist: ["auth"], storage };
 const appReducer = combineReducers({
   [baseAPI.reducerPath]: baseAPI.reducer,
   auth: authReducer,
+  cart: cartReducer,
   settings: settingsReducer,
 });
 const rootReducer = (state: any, action: any): any => {

@@ -10,12 +10,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const user = useSelector(selectAuthUser);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || Object.keys(user).length === 0) {
       router.replace("/login");
     }
   }, [user, router]);
 
-  if (!user) return null;
+  if (!user || Object.keys(user).length === 0) return null;
 
   return <>{children}</>;
 }
