@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useGetProductsQuery, useGetCategoriesQuery } from "@services/products-api";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useGetProductsQuery, useGetCategoryNamesQuery } from "@services/products-api";
 import { useAddToCartMutation } from "@services/cart-api";
 import { useSelector } from "@store/index";
 import { selectAuthUser } from "@slices/auth";
@@ -73,11 +73,17 @@ function Skeleton() {
 
 export default function ProductsPage() {
   const user = useSelector(selectAuthUser) as any;
+  const router = useRouter();
   const [addToCart] = useAddToCartMutation();
   const searchParams = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
-  const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get("search") ?? "");
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") ?? "");
+
+  // Read primitive values — stable across renders
+  const catParam    = searchParams.get("category") ?? "";
+  const searchParam = searchParams.get("search")   ?? "";
+
+  const [search, setSearch] = useState(searchParam);
+  const [debouncedSearch, setDebouncedSearch] = useState(searchParam);
+  const [selectedCategory, setSelectedCategory] = useState(catParam);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [appliedMin, setAppliedMin] = useState<number | undefined>();
@@ -86,15 +92,17 @@ export default function ProductsPage() {
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Sync state when header navigates to /products?category=X or ?search=X
+  // Sync ONLY when the actual URL params change (header nav, back/forward)
+  // Using primitive strings avoids re-firing on every render
   useEffect(() => {
-    const cat = searchParams.get("category") ?? "";
-    const q = searchParams.get("search") ?? "";
-    setSelectedCategory(cat);
-    setSearch(q);
-    setDebouncedSearch(q);
+    setSelectedCategory(catParam);
+    setSearch(searchParam);
+    setDebouncedSearch(searchParam);
+    setAppliedMin(undefined);
+    setAppliedMax(undefined);
     setPage(1);
-  }, [searchParams]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catParam, searchParam]);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300);
@@ -108,7 +116,7 @@ export default function ProductsPage() {
     minPrice: appliedMin, maxPrice: appliedMax,
     sortBy: sort.sortBy, sortOrder: sort.sortOrder,
   });
-  const { data: categoriesData } = useGetCategoriesQuery();
+  const { data: categoriesData } = useGetCategoryNamesQuery();
 
   const categories = categoriesData?.data || [];
   const products = productsData?.data || [];
@@ -136,6 +144,8 @@ export default function ProductsPage() {
   const clearFilters = () => {
     setSelectedCategory(""); setMinPrice(""); setMaxPrice("");
     setAppliedMin(undefined); setAppliedMax(undefined); setPage(1);
+    // also clear URL params so header pill deactivates
+    router.push(paths.products);
   };
 
   return (
