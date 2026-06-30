@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useGetProductsQuery, useGetCategoriesQuery } from "@services/products-api";
 import { useAddToCartMutation } from "@services/cart-api";
 import { useSelector } from "@store/index";
@@ -73,9 +74,10 @@ function Skeleton() {
 export default function ProductsPage() {
   const user = useSelector(selectAuthUser) as any;
   const [addToCart] = useAddToCartMutation();
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get("search") ?? "");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") ?? "");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [appliedMin, setAppliedMin] = useState<number | undefined>();
@@ -83,6 +85,16 @@ export default function ProductsPage() {
   const [sortIdx, setSortIdx] = useState(0);
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
+
+  // Sync state when header navigates to /products?category=X or ?search=X
+  useEffect(() => {
+    const cat = searchParams.get("category") ?? "";
+    const q = searchParams.get("search") ?? "";
+    setSelectedCategory(cat);
+    setSearch(q);
+    setDebouncedSearch(q);
+    setPage(1);
+  }, [searchParams]);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300);

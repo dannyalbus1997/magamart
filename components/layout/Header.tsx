@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { paths } from "@root/paths";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Search, ShoppingCart, User, MapPin, Package, Tag, Menu, SlidersHorizontal, ChevronDown,
 } from "lucide-react";
@@ -14,8 +14,9 @@ import { useGetCartQuery } from "@services/cart-api";
 
 export default function Header() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("");
+  const activeCategory = searchParams.get("category") ?? "";
 
   const user = useSelector(selectAuthUser) as any;
   const isLoggedIn = user && Object.keys(user).length > 0;
@@ -36,7 +37,6 @@ export default function Header() {
   };
 
   const handleCategoryClick = (cat: string) => {
-    setActiveCategory(cat);
     router.push(`${paths.products}?category=${encodeURIComponent(cat)}`);
   };
 
