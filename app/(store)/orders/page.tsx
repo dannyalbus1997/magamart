@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useGetMyOrdersQuery } from "@services/orders-api";
@@ -48,9 +49,9 @@ function OrderCard({ order }: { order: Order }) {
           <div className="space-y-3 mb-4">
             {order.items.map((item, idx) => (
               <div key={idx} className="flex gap-3 items-center">
-                <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 flex-shrink-0 overflow-hidden">
+                <div className="relative w-12 h-12 rounded-xl bg-white border border-gray-200 flex-shrink-0 overflow-hidden">
                   {item.product?.image
-                    ? <img src={getImageUrl(item.product.image)!} alt={item.product.name} className="w-full h-full object-cover"/>
+                    ? <Image src={getImageUrl(item.product.image)!} alt={item.product.name} fill sizes="48px" className="object-cover"/>
                     : <div className="w-full h-full flex items-center justify-center text-xl">📦</div>
                   }
                 </div>

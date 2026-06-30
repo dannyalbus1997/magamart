@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useGetCartQuery } from "@services/cart-api";
@@ -171,9 +172,9 @@ export default function CheckoutPage() {
           <div className="space-y-3 mb-4">
             {items.map(item => (
               <div key={item.productId} className="flex gap-3">
-                <div className="w-12 h-12 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden">
+                <div className="relative w-12 h-12 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden">
                   {item.product.image
-                    ? <img src={getImageUrl(item.product.image)!} alt={item.product.name} className="w-full h-full object-cover"/>
+                    ? <Image src={getImageUrl(item.product.image)!} alt={item.product.name} fill sizes="48px" className="object-cover"/>
                     : <div className="w-full h-full flex items-center justify-center text-xl">📦</div>
                   }
                 </div>

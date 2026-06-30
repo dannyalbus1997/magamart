@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useGetProductsQuery, useGetCategoriesQuery } from "@services/products-api";
 import { useAddToCartMutation } from "@services/cart-api";
@@ -23,7 +24,7 @@ function ProductCard({ product, onAddToCart }: { product: Product; onAddToCart: 
       <Link href={paths.product(product.id)}>
         <div className="relative h-48 bg-gray-100 overflow-hidden">
           {product.image
-            ? <img src={getImageUrl(product.image)!} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+            ? <Image src={getImageUrl(product.image)!} alt={product.name} fill sizes="(max-width:768px) 50vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-300"/>
             : <div className="w-full h-full flex items-center justify-center text-4xl">📦</div>
           }
           <span className="absolute top-2 left-2 text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{product.category}</span>

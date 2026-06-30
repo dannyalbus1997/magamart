@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AdminGuard } from "@root/guards";
 import { useGetProductsQuery, useDeleteProductMutation } from "@services/products-api";
@@ -65,9 +66,9 @@ export default function AdminProductsPage() {
                 : products.map(p => (
                     <tr key={p.id} className="hover:bg-gray-50 transition">
                       <td className="px-4 py-3">
-                        <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                        <div className="relative w-10 h-10 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
                           {p.image
-                            ? <img src={getImageUrl(p.image)!} alt={p.name} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}/>
+                            ? <Image src={getImageUrl(p.image)!} alt={p.name} fill sizes="40px" className="object-cover"/>
                             : <div className="w-full h-full flex items-center justify-center text-lg">📦</div>
                           }
                         </div>

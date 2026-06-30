@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, use } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useGetProductQuery, useGetProductsQuery } from "@services/products-api";
 import { useAddToCartMutation } from "@services/cart-api";
@@ -78,9 +79,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
         {/* Image */}
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden aspect-square flex items-center justify-center">
+        <div className="relative bg-white rounded-2xl border border-gray-100 overflow-hidden aspect-square flex items-center justify-center">
           {product.image
-            ? <img src={getImageUrl(product.image)!} alt={product.name} className="w-full h-full object-cover"/>
+            ? <Image src={getImageUrl(product.image)!} alt={product.name} fill sizes="(max-width:768px) 100vw, 50vw" className="object-cover"/>
             : <div className="text-8xl">📦</div>
           }
         </div>
@@ -138,9 +139,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             {related.map(rp => (
               <Link key={rp.id} href={paths.product(rp.id)}
                 className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition group">
-                <div className="h-40 bg-gray-100">
+                <div className="relative h-40 bg-gray-100">
                   {rp.image
-                    ? <img src={getImageUrl(rp.image)!} alt={rp.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+                    ? <Image src={getImageUrl(rp.image)!} alt={rp.name} fill sizes="(max-width:768px) 50vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-300"/>
                     : <div className="w-full h-full flex items-center justify-center text-3xl">📦</div>
                   }
                 </div>

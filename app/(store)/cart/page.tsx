@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useGetCartQuery, useUpdateCartItemMutation, useRemoveFromCartMutation } from "@services/cart-api";
 import { useSelector } from "@store/index";
@@ -82,9 +83,9 @@ export default function CartPage() {
         <div className="lg:col-span-2 space-y-4">
           {items.map(item => (
             <div key={item.productId} className="bg-white rounded-2xl border border-gray-100 p-4 flex gap-4">
-              <div className="w-20 h-20 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden">
+              <div className="relative w-20 h-20 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden">
                 {item.product.image
-                  ? <img src={getImageUrl(item.product.image)!} alt={item.product.name} className="w-full h-full object-cover"/>
+                  ? <Image src={getImageUrl(item.product.image)!} alt={item.product.name} fill sizes="80px" className="object-cover"/>
                   : <div className="w-full h-full flex items-center justify-center text-2xl">📦</div>
                 }
               </div>
