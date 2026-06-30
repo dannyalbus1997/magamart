@@ -105,7 +105,8 @@ function SignupForm() {
   const onSubmit = async (values: SignupFormValues) => {
     try {
       await signupMutation({
-        name: `${values.firstName.trim()} ${values.lastName.trim()}`,
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
         email: values.email.trim(),
         password: values.password,
       }).unwrap();
