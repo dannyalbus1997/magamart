@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { springBouncy, springSnappy } from "@components/animations";
 
 const slides = [
   {
@@ -79,12 +81,6 @@ const slides = [
         <ellipse cx="100" cy="160" rx="70" ry="15" fill="#166534" fillOpacity="0.3" />
         <path d="M40 100 Q40 160 100 165 Q160 160 160 100 Z" fill="#92400e" />
         <path d="M40 100 Q40 95 100 95 Q160 95 160 100" fill="#a16207" />
-        {[0,1,2,3].map(i => (
-          <path key={i} d={`M${50+i*25} 100 Q${55+i*25} 140 ${60+i*25} 160`} stroke="#78350f" strokeWidth="1.5" fill="none" />
-        ))}
-        {[0,1,2].map(i => (
-          <path key={i} d={`M40 ${105+i*18} Q100 ${100+i*18} 160 ${105+i*18}`} stroke="#78350f" strokeWidth="1" fill="none" />
-        ))}
         <circle cx="75" cy="85" r="22" fill="#ef4444" />
         <path d="M75 63 Q80 55 88 58" stroke="#16a34a" strokeWidth="2" fill="none" strokeLinecap="round" />
         <circle cx="115" cy="80" r="18" fill="#f97316" />
@@ -112,84 +108,137 @@ export default function HeroBanner() {
   const slide = slides[current];
 
   return (
-    <div
-      className="relative overflow-hidden transition-all duration-700"
-      style={{ background: `linear-gradient(135deg, ${slide.bgFrom} 0%, ${slide.bgTo} 100%)` }}
+    <motion.div
+      className="relative overflow-hidden"
+      animate={{ background: `linear-gradient(135deg, ${slide.bgFrom} 0%, ${slide.bgTo} 100%)` }}
+      transition={{ duration: 0.7, ease: "easeInOut" }}
     >
-      {/* Decorative gradient blobs */}
-      <div
-        className="absolute -top-16 -right-16 w-72 h-72 rounded-full blur-3xl opacity-60 pointer-events-none transition-all duration-700"
-        style={{ background: slide.blob1 }}
+      <motion.div
+        className="absolute -top-16 -right-16 w-72 h-72 rounded-full blur-3xl opacity-60 pointer-events-none"
+        animate={{ background: slide.blob1, scale: [1, 1.08, 1] }}
+        transition={{ background: { duration: 0.7 }, scale: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
       />
-      <div
-        className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full blur-3xl opacity-40 pointer-events-none transition-all duration-700"
-        style={{ background: slide.blob2 }}
+      <motion.div
+        className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full blur-3xl opacity-40 pointer-events-none"
+        animate={{ background: slide.blob2, scale: [1, 1.12, 1] }}
+        transition={{ background: { duration: 0.7 }, scale: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 } }}
       />
 
       <div className="max-w-7xl mx-auto px-6 py-10 flex items-center justify-between min-h-[280px] relative">
-        {/* Prev Button */}
-        <button
+        <motion.button
           onClick={prev}
-          className="absolute left-3 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 backdrop-blur-sm transition-all flex items-center justify-center text-white shadow-lg"
+          whileHover={{ scale: 1.12, backgroundColor: "rgba(255,255,255,0.25)" }}
+          whileTap={{ scale: 0.9 }}
+          transition={springSnappy}
+          className="absolute left-3 z-10 w-10 h-10 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-lg"
         >
           <ChevronLeft size={20} />
-        </button>
+        </motion.button>
 
-        {/* Content */}
-        <div className="flex-1 pl-8 pr-4">
-          {/* Tag badge */}
-          <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider ${slide.badgeColor}`}>
-            {slide.tag}
-          </span>
-          <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-3 drop-shadow-lg">
-            {slide.title}
-          </h1>
-          <p className={`text-xl font-bold mb-6 ${slide.accentColor}`}>{slide.subtitle}</p>
-          <div className="flex items-center gap-3">
-            <button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all text-white font-bold px-8 py-3 rounded-full text-sm shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transform">
-              Shop Now
-            </button>
-            <button className="bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm text-white font-semibold px-6 py-3 rounded-full text-sm transition-all">
-              View Deals
-            </button>
-          </div>
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current}
+            className="flex-1 pl-8 pr-4"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <motion.span
+              className={`inline-block text-xs font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-wider ${slide.badgeColor}`}
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, ...springBouncy }}
+            >
+              {slide.tag}
+            </motion.span>
+            <motion.h1
+              className="text-4xl md:text-5xl font-black text-white leading-tight mb-3 drop-shadow-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.18, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {slide.title}
+            </motion.h1>
+            <motion.p
+              className={`text-xl font-bold mb-6 ${slide.accentColor}`}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {slide.subtitle}
+            </motion.p>
+            <div className="flex items-center gap-3">
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.32, ...springBouncy }}
+                whileHover={{ scale: 1.06, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold px-8 py-3 rounded-full text-sm shadow-lg"
+              >
+                Shop Now
+              </motion.button>
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4, ...springBouncy }}
+                whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.2)" }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white/10 border border-white/20 backdrop-blur-sm text-white font-semibold px-6 py-3 rounded-full text-sm"
+              >
+                View Deals
+              </motion.button>
+            </div>
+          </motion.div>
+        </AnimatePresence>
 
-        {/* Image */}
-        <div className="flex-shrink-0 pr-16 flex items-center justify-center relative">
-          {/* Glow ring behind product */}
-          <div
-            className="absolute w-44 h-44 rounded-full blur-2xl opacity-30"
-            style={{ background: slide.blob1 }}
-          />
-          <div className="relative">
-            {slide.image}
-          </div>
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`img-${current}`}
+            className="flex-shrink-0 pr-16 flex items-center justify-center relative"
+            initial={{ opacity: 0, x: 50, scale: 0.85 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -30, scale: 0.9 }}
+            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="absolute w-44 h-44 rounded-full blur-2xl opacity-30" style={{ background: slide.blob1 }} />
+            <motion.div
+              className="relative"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >
+              {slide.image}
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
 
-        {/* Next Button */}
-        <button
+        <motion.button
           onClick={next}
-          className="absolute right-3 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 backdrop-blur-sm transition-all flex items-center justify-center text-white shadow-lg"
+          whileHover={{ scale: 1.12, backgroundColor: "rgba(255,255,255,0.25)" }}
+          whileTap={{ scale: 0.9 }}
+          transition={springSnappy}
+          className="absolute right-3 z-10 w-10 h-10 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-lg"
         >
           <ChevronRight size={20} />
-        </button>
+        </motion.button>
       </div>
 
-      {/* Gradient dot indicators */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 items-center">
         {slides.map((_, i) => (
-          <button
+          <motion.button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`transition-all duration-300 rounded-full ${
-              i === current
-                ? "w-6 h-2.5 bg-gradient-to-r from-blue-400 to-indigo-400 shadow-md shadow-blue-400/50"
-                : "w-2.5 h-2.5 bg-white/30 hover:bg-white/50"
-            }`}
+            animate={{
+              width: i === current ? 24 : 10,
+              backgroundColor: i === current ? "#818cf8" : "rgba(255,255,255,0.3)",
+            }}
+            whileHover={{ scale: 1.3 }}
+            transition={springSnappy}
+            className="h-2.5 rounded-full"
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

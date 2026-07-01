@@ -24,6 +24,7 @@
     "country-state-city": "^3.2.1",
     "date-fns": "^4.4.0",
     "dayjs": "^1.11.21",
+    "framer-motion": "^12.42.0",
     "lodash": "^4.18.1",
     "lucide-react": "^1.22.0",
     "next": "15.5.19",

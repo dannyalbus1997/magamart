@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { Store, Persistor } from "@store/index";
+import LoadingScreen from "@components/ui/LoadingScreen";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -16,7 +17,7 @@ import AuthInitializer from "@root/hoc/auth-initializer";
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <Provider store={Store as any}>
-      <PersistGate loading={null} persistor={Persistor}>
+      <PersistGate loading={<LoadingScreen />} persistor={Persistor}>
         <NextThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <MuiThemeProvider theme={theme}>
             <CssBaseline />
